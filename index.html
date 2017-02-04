@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css" />
+        <link rel="stylesheet" type="text/css" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css" />
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+        <link rel="stylesheet" href="css/leaflet.draw.css" />
+        <link rel="stylesheet" href="css/leaflet.measurecontrol.css" />
+        <link rel="stylesheet" href="css/L.Control.Pan.css" />
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet-heat.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/OSMBuildings-Leaflet.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/leaflet.draw.js"></script>
+        <script src="js/leaflet.measurecontrol.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="js/L.Control.Pan.js"></script>
+        <script src="data/TotalPopulationAgeOver650.js"></script>
+        <script src="data/PopulationDensityAgeOver651.js"></script>
+        <script src="data/MRTLRTLine2.js"></script>
+        <script src="data/MRTLRTStnPtt3.js"></script>
+        <script src="data/Eldercare4.js"></script>
+        <script src="data/AreaWithoutEldercare5.js"></script>
+        <script src="data/HospitalsGeneralBuffer6.js"></script>
+        <script src="data/HospitalMRTPointsCount7.js"></script>
+        <script src="data/PopulationBedRatioVoronoishp8.js"></script>
+        <script src="data/HospitalsGeneral9.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+        var map = L.map('map', {
+            measureControl:true,
+            zoomControl:true, maxZoom:22, minZoom:10
+        }).fitBounds([[1.24266501072,103.713269625],[1.40667714987,103.958304229]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.addAttribution('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a>');
+        var feature_group = new L.featureGroup([]);
+        var bounds_group = new L.featureGroup([]);
+        var raster_group = new L.LayerGroup([]);
+        var basemap0 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 22
+        });
+        basemap0.addTo(map);
+        var basemap1 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 22
+        });
+        basemap1.addTo(map);
+        function setBounds() {
+        }
+        function geoJson2heat(geojson, weight) {
+          return geojson.features.map(function(feature) {
+            return [
+              feature.geometry.coordinates[1],
+              feature.geometry.coordinates[0],
+              feature.properties[weight]
+            ];
+          });
+        }
+        function pop_TotalPopulationAgeOver650(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_TotalPopulationAgeOver650(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>OBJECTID</strong><br />' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SUBZONE_N</strong><br />' + (feature.properties['SUBZONE_N'] !== null ? Autolinker.link(String(feature.properties['SUBZONE_N'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PLN_AREA_N</strong><br />' + (feature.properties['PLN_AREA_N'] !== null ? Autolinker.link(String(feature.properties['PLN_AREA_N'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TOTAL</strong><br />' + (feature.properties['TOTAL'] !== null ? Autolinker.link(String(feature.properties['TOTAL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>X_ADDR</strong><br />' + (feature.properties['X_ADDR'] !== null ? Autolinker.link(String(feature.properties['X_ADDR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y_ADDR</strong><br />' + (feature.properties['Y_ADDR'] !== null ? Autolinker.link(String(feature.properties['Y_ADDR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Over65</strong><br />' + (feature.properties['Over65'] !== null ? Autolinker.link(String(feature.properties['Over65'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>popden</strong><br />' + (feature.properties['popden'] !== null ? Autolinker.link(String(feature.properties['popden'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_TotalPopulationAgeOver650(feature) {
+            if (feature.properties['Over65'] >= 0.000000 && feature.properties['Over65'] <= 880.000000 ) {
+                return {
+                pane: 'pane_TotalPopulationAgeOver650',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(247,251,255,1.0)',
+            }
+            }
+            if (feature.properties['Over65'] >= 880.000000 && feature.properties['Over65'] <= 2270.000000 ) {
+                return {
+                pane: 'pane_TotalPopulationAgeOver650',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(200,221,240,1.0)',
+            }
+            }
+            if (feature.properties['Over65'] >= 2270.000000 && feature.properties['Over65'] <= 4070.000000 ) {
+                return {
+                pane: 'pane_TotalPopulationAgeOver650',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(115,179,216,1.0)',
+            }
+            }
+            if (feature.properties['Over65'] >= 4070.000000 && feature.properties['Over65'] <= 8770.000000 ) {
+                return {
+                pane: 'pane_TotalPopulationAgeOver650',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(40,121,185,1.0)',
+            }
+            }
+            if (feature.properties['Over65'] >= 8770.000000 && feature.properties['Over65'] <= 15350.000000 ) {
+                return {
+                pane: 'pane_TotalPopulationAgeOver650',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(8,48,107,1.0)',
+            }
+            }
+        }
+        map.createPane('pane_TotalPopulationAgeOver650');
+        map.getPane('pane_TotalPopulationAgeOver650').style.zIndex = 600;
+        map.getPane('pane_TotalPopulationAgeOver650').style['mix-blend-mode'] = 'normal';
+    var layer_TotalPopulationAgeOver650 = new L.geoJson(json_TotalPopulationAgeOver650, {
+        pane: 'pane_TotalPopulationAgeOver650',
+        onEachFeature: pop_TotalPopulationAgeOver650,
+        style: style_TotalPopulationAgeOver650
+    });
+        bounds_group.addLayer(layer_TotalPopulationAgeOver650);
+        feature_group.addLayer(layer_TotalPopulationAgeOver650);
+        function pop_PopulationDensityAgeOver651(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_PopulationDensityAgeOver651(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>OBJECTID</strong><br />' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SUBZONE_N</strong><br />' + (feature.properties['SUBZONE_N'] !== null ? Autolinker.link(String(feature.properties['SUBZONE_N'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PLN_AREA_N</strong><br />' + (feature.properties['PLN_AREA_N'] !== null ? Autolinker.link(String(feature.properties['PLN_AREA_N'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TOTAL</strong><br />' + (feature.properties['TOTAL'] !== null ? Autolinker.link(String(feature.properties['TOTAL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>X_ADDR</strong><br />' + (feature.properties['X_ADDR'] !== null ? Autolinker.link(String(feature.properties['X_ADDR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y_ADDR</strong><br />' + (feature.properties['Y_ADDR'] !== null ? Autolinker.link(String(feature.properties['Y_ADDR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Over65</strong><br />' + (feature.properties['Over65'] !== null ? Autolinker.link(String(feature.properties['Over65'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>popden</strong><br />' + (feature.properties['popden'] !== null ? Autolinker.link(String(feature.properties['popden'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_PopulationDensityAgeOver651(feature) {
+            if (feature.properties['popden'] >= 0.000000 && feature.properties['popden'] <= 745.000000 ) {
+                return {
+                pane: 'pane_PopulationDensityAgeOver651',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(247,251,255,1.0)',
+            }
+            }
+            if (feature.properties['popden'] >= 745.000000 && feature.properties['popden'] <= 2078.000000 ) {
+                return {
+                pane: 'pane_PopulationDensityAgeOver651',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(200,221,240,1.0)',
+            }
+            }
+            if (feature.properties['popden'] >= 2078.000000 && feature.properties['popden'] <= 3623.000000 ) {
+                return {
+                pane: 'pane_PopulationDensityAgeOver651',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(115,179,216,1.0)',
+            }
+            }
+            if (feature.properties['popden'] >= 3623.000000 && feature.properties['popden'] <= 5732.000000 ) {
+                return {
+                pane: 'pane_PopulationDensityAgeOver651',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(40,121,185,1.0)',
+            }
+            }
+            if (feature.properties['popden'] >= 5732.000000 && feature.properties['popden'] <= 8309.000000 ) {
+                return {
+                pane: 'pane_PopulationDensityAgeOver651',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(8,48,107,1.0)',
+            }
+            }
+        }
+        map.createPane('pane_PopulationDensityAgeOver651');
+        map.getPane('pane_PopulationDensityAgeOver651').style.zIndex = 601;
+        map.getPane('pane_PopulationDensityAgeOver651').style['mix-blend-mode'] = 'normal';
+    var layer_PopulationDensityAgeOver651 = new L.geoJson(json_PopulationDensityAgeOver651, {
+        pane: 'pane_PopulationDensityAgeOver651',
+        onEachFeature: pop_PopulationDensityAgeOver651,
+        style: style_PopulationDensityAgeOver651
+    });
+        bounds_group.addLayer(layer_PopulationDensityAgeOver651);
+        feature_group.addLayer(layer_PopulationDensityAgeOver651);
+        function pop_MRTLRTLine2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_MRTLRTLine2(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>osm_id</strong><br />' + (feature.properties['osm_id'] !== null ? Autolinker.link(String(feature.properties['osm_id'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>name</strong><br />' + (feature.properties['name'] !== null ? Autolinker.link(String(feature.properties['name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>type</strong><br />' + (feature.properties['type'] !== null ? Autolinker.link(String(feature.properties['type'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_MRTLRTLine2(feature) {
+            switch(feature.properties['name']) {
+                case 'Bukit Panjang LRT':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(133,133,133,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case 'Circle Line MRT':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(212,182,45,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case 'Downtown Line MRT':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(16,37,223,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case 'MRT East West Line (EW)':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(97,201,56,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case 'MRT East West Line (EW) Changi Airport Line':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(97,201,56,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case 'North East Line (NE)':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(136,19,237,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case 'North South Line (NS)':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(223,16,40,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case '':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(93,214,18,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case 'Punggol LRT':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(133,133,133,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+                case 'Sengkang LRT':
+                    return {
+                pane: 'pane_MRTLRTLine2',
+                opacity: 1,
+                color: 'rgba(133,133,133,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_MRTLRTLine2');
+        map.getPane('pane_MRTLRTLine2').style.zIndex = 602;
+        map.getPane('pane_MRTLRTLine2').style['mix-blend-mode'] = 'normal';
+    var layer_MRTLRTLine2 = new L.geoJson(json_MRTLRTLine2, {
+        pane: 'pane_MRTLRTLine2',
+        onEachFeature: pop_MRTLRTLine2,
+        style: style_MRTLRTLine2
+    });
+        bounds_group.addLayer(layer_MRTLRTLine2);
+        feature_group.addLayer(layer_MRTLRTLine2);
+        function pop_MRTLRTStnPtt3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_MRTLRTStnPtt3(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>X</strong><br />' + (feature.properties['X'] !== null ? Autolinker.link(String(feature.properties['X'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y</strong><br />' + (feature.properties['Y'] !== null ? Autolinker.link(String(feature.properties['Y'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>OBJECTID</strong><br />' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>STN_NAME</strong><br />' + (feature.properties['STN_NAME'] !== null ? Autolinker.link(String(feature.properties['STN_NAME'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>STN_NO</strong><br />' + (feature.properties['STN_NO'] !== null ? Autolinker.link(String(feature.properties['STN_NO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Line</strong><br />' + (feature.properties['Line'] !== null ? Autolinker.link(String(feature.properties['Line'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_MRTLRTStnPtt3(feature) {
+            switch(feature.properties['Line']) {
+                case 'BP':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,133,133,1.0)',
+            }
+                    break;
+                case 'CC':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(212,182,45,1.0)',
+            }
+                    break;
+                case 'CG':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(97,201,56,1.0)',
+            }
+                    break;
+                case 'DT':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(16,37,223,1.0)',
+            }
+                    break;
+                case 'EW':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(97,201,56,1.0)',
+            }
+                    break;
+                case 'NE':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(136,19,237,1.0)',
+            }
+                    break;
+                case 'NS':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,16,40,1.0)',
+            }
+                    break;
+                case '':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(46,230,138,1.0)',
+            }
+                    break;
+                case 'PE':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,133,133,1.0)',
+            }
+                    break;
+                case 'PW':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,133,133,1.0)',
+            }
+                    break;
+                case 'SE':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,133,133,1.0)',
+            }
+                    break;
+                case 'SW':
+                    return {
+                pane: 'pane_MRTLRTStnPtt3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(133,133,133,1.0)',
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_MRTLRTStnPtt3');
+        map.getPane('pane_MRTLRTStnPtt3').style.zIndex = 603;
+        map.getPane('pane_MRTLRTStnPtt3').style['mix-blend-mode'] = 'normal';
+        var layer_MRTLRTStnPtt3 = new L.geoJson(json_MRTLRTStnPtt3, {
+            pane: 'pane_MRTLRTStnPtt3',
+            onEachFeature: pop_MRTLRTStnPtt3,
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, style_MRTLRTStnPtt3(feature))
+            }
+        });
+        bounds_group.addLayer(layer_MRTLRTStnPtt3);
+        feature_group.addLayer(layer_MRTLRTStnPtt3);
+        function pop_Eldercare4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_Eldercare4(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>OBJECTID</strong><br />' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESSBLO</strong><br />' + (feature.properties['ADDRESSBLO'] !== null ? Autolinker.link(String(feature.properties['ADDRESSBLO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESSBUI</strong><br />' + (feature.properties['ADDRESSBUI'] !== null ? Autolinker.link(String(feature.properties['ADDRESSBUI'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESSPOS</strong><br />' + (feature.properties['ADDRESSPOS'] !== null ? Autolinker.link(String(feature.properties['ADDRESSPOS'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESSSTR</strong><br />' + (feature.properties['ADDRESSSTR'] !== null ? Autolinker.link(String(feature.properties['ADDRESSSTR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESSTYP</strong><br />' + (feature.properties['ADDRESSTYP'] !== null ? Autolinker.link(String(feature.properties['ADDRESSTYP'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>DESCRIPTIO</strong><br />' + (feature.properties['DESCRIPTIO'] !== null ? Autolinker.link(String(feature.properties['DESCRIPTIO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>HYPERLINK</strong><br />' + (feature.properties['HYPERLINK'] !== null ? Autolinker.link(String(feature.properties['HYPERLINK'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>LANDXADDRE</strong><br />' + (feature.properties['LANDXADDRE'] !== null ? Autolinker.link(String(feature.properties['LANDXADDRE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>LANDYADDRE</strong><br />' + (feature.properties['LANDYADDRE'] !== null ? Autolinker.link(String(feature.properties['LANDYADDRE'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NAME</strong><br />' + (feature.properties['NAME'] !== null ? Autolinker.link(String(feature.properties['NAME'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PHOTOURL</strong><br />' + (feature.properties['PHOTOURL'] !== null ? Autolinker.link(String(feature.properties['PHOTOURL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESSFLO</strong><br />' + (feature.properties['ADDRESSFLO'] !== null ? Autolinker.link(String(feature.properties['ADDRESSFLO'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESSUNI</strong><br />' + (feature.properties['ADDRESSUNI'] !== null ? Autolinker.link(String(feature.properties['ADDRESSUNI'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>INC_CRC</strong><br />' + (feature.properties['INC_CRC'] !== null ? Autolinker.link(String(feature.properties['INC_CRC'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FMEL_UPD_D</strong><br />' + (feature.properties['FMEL_UPD_D'] !== null ? Autolinker.link(String(feature.properties['FMEL_UPD_D'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>X_ADDR</strong><br />' + (feature.properties['X_ADDR'] !== null ? Autolinker.link(String(feature.properties['X_ADDR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y_ADDR</strong><br />' + (feature.properties['Y_ADDR'] !== null ? Autolinker.link(String(feature.properties['Y_ADDR'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_Eldercare4() {
+            return {
+                pane: 'pane_Eldercare4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fillOpacity: 1,
+                fillColor: 'rgba(99,128,62,1.0)',
+            }
+        }
+        map.createPane('pane_Eldercare4');
+        map.getPane('pane_Eldercare4').style.zIndex = 604;
+        map.getPane('pane_Eldercare4').style['mix-blend-mode'] = 'normal';
+        var layer_Eldercare4 = new L.geoJson(json_Eldercare4, {
+            pane: 'pane_Eldercare4',
+            onEachFeature: pop_Eldercare4,
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, style_Eldercare4(feature))
+            }
+        });
+        bounds_group.addLayer(layer_Eldercare4);
+        feature_group.addLayer(layer_Eldercare4);
+        function pop_AreaWithoutEldercare5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_AreaWithoutEldercare5(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>OBJECTID</strong><br />' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SUBZONE_N</strong><br />' + (feature.properties['SUBZONE_N'] !== null ? Autolinker.link(String(feature.properties['SUBZONE_N'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PLN_AREA_N</strong><br />' + (feature.properties['PLN_AREA_N'] !== null ? Autolinker.link(String(feature.properties['PLN_AREA_N'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TOTAL</strong><br />' + (feature.properties['TOTAL'] !== null ? Autolinker.link(String(feature.properties['TOTAL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>X_ADDR</strong><br />' + (feature.properties['X_ADDR'] !== null ? Autolinker.link(String(feature.properties['X_ADDR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y_ADDR</strong><br />' + (feature.properties['Y_ADDR'] !== null ? Autolinker.link(String(feature.properties['Y_ADDR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Over65</strong><br />' + (feature.properties['Over65'] !== null ? Autolinker.link(String(feature.properties['Over65'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>popden</strong><br />' + (feature.properties['popden'] !== null ? Autolinker.link(String(feature.properties['popden'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NumElderca</strong><br />' + (feature.properties['NumElderca'] !== null ? Autolinker.link(String(feature.properties['NumElderca'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_AreaWithoutEldercare5(feature) {
+            if (feature.properties['Over65'] >= 10.000000 && feature.properties['Over65'] <= 810.000000 ) {
+                return {
+                pane: 'pane_AreaWithoutEldercare5',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(247,251,255,1.0)',
+            }
+            }
+            if (feature.properties['Over65'] >= 810.000000 && feature.properties['Over65'] <= 1950.000000 ) {
+                return {
+                pane: 'pane_AreaWithoutEldercare5',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(200,221,240,1.0)',
+            }
+            }
+            if (feature.properties['Over65'] >= 1950.000000 && feature.properties['Over65'] <= 3510.000000 ) {
+                return {
+                pane: 'pane_AreaWithoutEldercare5',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(115,179,216,1.0)',
+            }
+            }
+            if (feature.properties['Over65'] >= 3510.000000 && feature.properties['Over65'] <= 5320.000000 ) {
+                return {
+                pane: 'pane_AreaWithoutEldercare5',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(40,121,185,1.0)',
+            }
+            }
+            if (feature.properties['Over65'] >= 5320.000000 && feature.properties['Over65'] <= 6960.000000 ) {
+                return {
+                pane: 'pane_AreaWithoutEldercare5',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(8,48,107,1.0)',
+            }
+            }
+        }
+        map.createPane('pane_AreaWithoutEldercare5');
+        map.getPane('pane_AreaWithoutEldercare5').style.zIndex = 605;
+        map.getPane('pane_AreaWithoutEldercare5').style['mix-blend-mode'] = 'normal';
+    var layer_AreaWithoutEldercare5 = new L.geoJson(json_AreaWithoutEldercare5, {
+        pane: 'pane_AreaWithoutEldercare5',
+        onEachFeature: pop_AreaWithoutEldercare5,
+        style: style_AreaWithoutEldercare5
+    });
+        bounds_group.addLayer(layer_AreaWithoutEldercare5);
+        feature_group.addLayer(layer_AreaWithoutEldercare5);
+        function pop_HospitalsGeneralBuffer6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_HospitalsGeneralBuffer6(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Type</strong><br />' + (feature.properties['Type'] !== null ? Autolinker.link(String(feature.properties['Type'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['Name'] !== null ? Autolinker.link(String(feature.properties['Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Address</strong><br />' + (feature.properties['Address'] !== null ? Autolinker.link(String(feature.properties['Address'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Postal</strong><br />' + (feature.properties['Postal'] !== null ? Autolinker.link(String(feature.properties['Postal'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Beds</strong><br />' + (feature.properties['Beds'] !== null ? Autolinker.link(String(feature.properties['Beds'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>XCOORD</strong><br />' + (feature.properties['XCOORD'] !== null ? Autolinker.link(String(feature.properties['XCOORD'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>YCOORD</strong><br />' + (feature.properties['YCOORD'] !== null ? Autolinker.link(String(feature.properties['YCOORD'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_HospitalsGeneralBuffer6() {
+            return {
+                pane: 'pane_HospitalsGeneralBuffer6',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0.8,
+                fillColor: 'rgba(136,226,232,1.0)',
+            }
+        }
+        map.createPane('pane_HospitalsGeneralBuffer6');
+        map.getPane('pane_HospitalsGeneralBuffer6').style.zIndex = 606;
+        map.getPane('pane_HospitalsGeneralBuffer6').style['mix-blend-mode'] = 'normal';
+    var layer_HospitalsGeneralBuffer6 = new L.geoJson(json_HospitalsGeneralBuffer6, {
+        pane: 'pane_HospitalsGeneralBuffer6',
+        onEachFeature: pop_HospitalsGeneralBuffer6,
+        style: style_HospitalsGeneralBuffer6
+    });
+        bounds_group.addLayer(layer_HospitalsGeneralBuffer6);
+        feature_group.addLayer(layer_HospitalsGeneralBuffer6);
+        function pop_HospitalMRTPointsCount7(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_HospitalMRTPointsCount7(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Type</strong><br />' + (feature.properties['Type'] !== null ? Autolinker.link(String(feature.properties['Type'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['Name'] !== null ? Autolinker.link(String(feature.properties['Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Address</strong><br />' + (feature.properties['Address'] !== null ? Autolinker.link(String(feature.properties['Address'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Postal</strong><br />' + (feature.properties['Postal'] !== null ? Autolinker.link(String(feature.properties['Postal'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Beds</strong><br />' + (feature.properties['Beds'] !== null ? Autolinker.link(String(feature.properties['Beds'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>XCOORD</strong><br />' + (feature.properties['XCOORD'] !== null ? Autolinker.link(String(feature.properties['XCOORD'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>YCOORD</strong><br />' + (feature.properties['YCOORD'] !== null ? Autolinker.link(String(feature.properties['YCOORD'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NUMPOINTS</strong><br />' + (feature.properties['NUMPOINTS'] !== null ? Autolinker.link(String(feature.properties['NUMPOINTS'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_HospitalMRTPointsCount7() {
+            return {
+                pane: 'pane_HospitalMRTPointsCount7',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(153,238,145,1.0)',
+            }
+        }
+        map.createPane('pane_HospitalMRTPointsCount7');
+        map.getPane('pane_HospitalMRTPointsCount7').style.zIndex = 607;
+        map.getPane('pane_HospitalMRTPointsCount7').style['mix-blend-mode'] = 'normal';
+    var layer_HospitalMRTPointsCount7 = new L.geoJson(json_HospitalMRTPointsCount7, {
+        pane: 'pane_HospitalMRTPointsCount7',
+        onEachFeature: pop_HospitalMRTPointsCount7,
+        style: style_HospitalMRTPointsCount7
+    });
+        bounds_group.addLayer(layer_HospitalMRTPointsCount7);
+        feature_group.addLayer(layer_HospitalMRTPointsCount7);
+        function pop_PopulationBedRatioVoronoishp8(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_PopulationBedRatioVoronoishp8(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Type</strong><br />' + (feature.properties['Type'] !== null ? Autolinker.link(String(feature.properties['Type'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['Name'] !== null ? Autolinker.link(String(feature.properties['Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Address</strong><br />' + (feature.properties['Address'] !== null ? Autolinker.link(String(feature.properties['Address'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Postal</strong><br />' + (feature.properties['Postal'] !== null ? Autolinker.link(String(feature.properties['Postal'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Beds</strong><br />' + (feature.properties['Beds'] !== null ? Autolinker.link(String(feature.properties['Beds'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>sumTOTAL</strong><br />' + (feature.properties['sumTOTAL'] !== null ? Autolinker.link(String(feature.properties['sumTOTAL'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>sumOver65</strong><br />' + (feature.properties['sumOver65'] !== null ? Autolinker.link(String(feature.properties['sumOver65'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>sumpopden</strong><br />' + (feature.properties['sumpopden'] !== null ? Autolinker.link(String(feature.properties['sumpopden'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>count</strong><br />' + (feature.properties['count'] !== null ? Autolinker.link(String(feature.properties['count'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ratio</strong><br />' + (feature.properties['ratio'] !== null ? Autolinker.link(String(feature.properties['ratio'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_PopulationBedRatioVoronoishp8(feature) {
+            switch(feature.properties['Name']) {
+                case 'Changi General Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(166,206,227,0.6)',
+            }
+                    break;
+                case 'Gleneagles Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(31,120,180,0.6)',
+            }
+                    break;
+                case 'Khoo Teck Puat Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(178,223,138,0.6)',
+            }
+                    break;
+                case 'Mount Alvernia Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,0.6)',
+            }
+                    break;
+                case 'National University Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(251,154,153,0.6)',
+            }
+                    break;
+                case 'Ng Teng Fong General Hospital & Jurong Community Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,0.6)',
+            }
+                    break;
+                case 'Parkway East Hospital (former East Shore Hospital)':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(253,191,111,0.6)',
+            }
+                    break;
+                case 'Raffles Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(255,127,0,0.6)',
+            }
+                    break;
+                case 'Sengkang General Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(202,178,214,0.6)',
+            }
+                    break;
+                case 'Singapore General Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(106,61,154,0.6)',
+            }
+                    break;
+                case 'Tan Tock Seng Hospital':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,153,0.6)',
+            }
+                    break;
+                case '':
+                    return {
+                pane: 'pane_PopulationBedRatioVoronoishp8',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.6)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(216,214,58,0.6)',
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_PopulationBedRatioVoronoishp8');
+        map.getPane('pane_PopulationBedRatioVoronoishp8').style.zIndex = 608;
+        map.getPane('pane_PopulationBedRatioVoronoishp8').style['mix-blend-mode'] = 'normal';
+    var layer_PopulationBedRatioVoronoishp8 = new L.geoJson(json_PopulationBedRatioVoronoishp8, {
+        pane: 'pane_PopulationBedRatioVoronoishp8',
+        onEachFeature: pop_PopulationBedRatioVoronoishp8,
+        style: style_PopulationBedRatioVoronoishp8
+    });
+        bounds_group.addLayer(layer_PopulationBedRatioVoronoishp8);
+        feature_group.addLayer(layer_PopulationBedRatioVoronoishp8);
+        function pop_HospitalsGeneral9(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_HospitalsGeneral9(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Type</strong><br />' + (feature.properties['Type'] !== null ? Autolinker.link(String(feature.properties['Type'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['Name'] !== null ? Autolinker.link(String(feature.properties['Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Address</strong><br />' + (feature.properties['Address'] !== null ? Autolinker.link(String(feature.properties['Address'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Postal</strong><br />' + (feature.properties['Postal'] !== null ? Autolinker.link(String(feature.properties['Postal'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Beds</strong><br />' + (feature.properties['Beds'] !== null ? Autolinker.link(String(feature.properties['Beds'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_HospitalsGeneral9(feature) {
+            if (feature.properties['Beds'] >= 106.000000 && feature.properties['Beds'] <= 380.000000 ) {
+                return {
+                pane: 'pane_HospitalsGeneral9',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'legend/HospitalsGeneral9_1063800.png',
+            iconSize: [38.0, 38.0]
+        }),
+            }
+            }
+            if (feature.properties['Beds'] >= 380.000000 && feature.properties['Beds'] <= 1100.000000 ) {
+                return {
+                pane: 'pane_HospitalsGeneral9',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'legend/HospitalsGeneral9_38011001.png',
+            iconSize: [38.0, 38.0]
+        }),
+            }
+            }
+            if (feature.properties['Beds'] >= 1100.000000 && feature.properties['Beds'] <= 1700.000000 ) {
+                return {
+                pane: 'pane_HospitalsGeneral9',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'legend/HospitalsGeneral9_110017002.png',
+            iconSize: [38.0, 38.0]
+        }),
+            }
+            }
+        }
+        map.createPane('pane_HospitalsGeneral9');
+        map.getPane('pane_HospitalsGeneral9').style.zIndex = 609;
+        map.getPane('pane_HospitalsGeneral9').style['mix-blend-mode'] = 'normal';
+        var layer_HospitalsGeneral9 = new L.geoJson(json_HospitalsGeneral9, {
+            pane: 'pane_HospitalsGeneral9',
+            onEachFeature: pop_HospitalsGeneral9,
+            pointToLayer: function (feature, latlng) {
+                return L.marker(latlng, style_HospitalsGeneral9(feature))
+            }
+        });
+        bounds_group.addLayer(layer_HospitalsGeneral9);
+        feature_group.addLayer(layer_HospitalsGeneral9);
+        raster_group.addTo(map);
+        feature_group.addTo(map);
+        var baseMaps = {'OSM': basemap0, 'OSM B&W': basemap1};
+        L.control.layers(baseMaps,{'Hospitals_General (Num of Beds)<br /><table><tr><td style="text-align: center;"><img src="legend/HospitalsGeneral9_1063800.png" /></td><td> 106 - 380 </td></tr><tr><td style="text-align: center;"><img src="legend/HospitalsGeneral9_38011001.png" /></td><td> 380 - 1100 </td></tr><tr><td style="text-align: center;"><img src="legend/HospitalsGeneral9_110017002.png" /></td><td> 1100 - 1700 </td></tr></table><hr></hr>': layer_HospitalsGeneral9,'Population_Bed_Ratio_Voronoishp<br /><table><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_ChangiGeneralHospital0.png" /></td><td>Changi General Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_GleneaglesHospital1.png" /></td><td>Gleneagles Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_KhooTeckPuatHospital2.png" /></td><td>Khoo Teck Puat Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_MountAlverniaHospital3.png" /></td><td>Mount Alvernia Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_NationalUniversityHospital4.png" /></td><td>National University Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_NgTengFongGeneralHospitalJurongCommunityHospital5.png" /></td><td>Ng Teng Fong General Hospital & Jurong Community Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_ParkwayEastHospitalformerEastShoreHospital6.png" /></td><td>Parkway East Hospital (former East Shore Hospital)</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_RafflesHospital7.png" /></td><td>Raffles Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_SengkangGeneralHospital8.png" /></td><td>Sengkang General Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_SingaporeGeneralHospital9.png" /></td><td>Singapore General Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_TanTockSengHospital10.png" /></td><td>Tan Tock Seng Hospital</td></tr></table><hr></hr>': layer_PopulationBedRatioVoronoishp8,'<img src="legend/HospitalMRTPointsCount7.png" /> Hospital_MRT_Points_Count (Count == 0) <hr></hr>': layer_HospitalMRTPointsCount7,'<img src="legend/HospitalsGeneralBuffer6.png" /> Hospitals_General_Buffer <hr></hr>': layer_HospitalsGeneralBuffer6,'Area_Without_Eldercare (Population Age >65) <br /><table><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_108100.png" /></td><td> 10 - 810 </td></tr><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_81019501.png" /></td><td> 810 - 1950 </td></tr><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_195035102.png" /></td><td> 1950 - 3510 </td></tr><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_351053203.png" /></td><td> 3510 - 5320 </td></tr><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_532069604.png" /></td><td> 5320 - 6960 </td></tr></table><hr></hr>': layer_AreaWithoutEldercare5,'<img src="legend/Eldercare4.png" /> Eldercare<hr></hr>': layer_Eldercare4,'MRTLRTStnPtt<br /><table><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_BP0.png" /></td><td>BP</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_CC1.png" /></td><td>CC</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_CG2.png" /></td><td>CG</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_DT3.png" /></td><td>DT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_EW4.png" /></td><td>EW</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_NE5.png" /></td><td>NE</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_NS6.png" /></td><td>NS</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_PE8.png" /></td><td>PE</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_PW9.png" /></td><td>PW</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_SE10.png" /></td><td>SE</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_SW11.png" /></td><td>SW</td></tr></table><hr></hr>': layer_MRTLRTStnPtt3,'MRT_LRT_Line<br /><table><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_BukitPanjangLRT0.png" /></td><td>Bukit Panjang LRT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_CircleLineMRT1.png" /></td><td>Circle Line MRT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_DowntownLineMRT2.png" /></td><td>Downtown Line MRT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_MRTEastWestLineEW3.png" /></td><td>MRT East West Line (EW)</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_MRTEastWestLineEWChangiAirportLine4.png" /></td><td>MRT East West Line (EW) Changi Airport Line</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_NorthEastLineNE5.png" /></td><td>North East Line (NE)</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_NorthSouthLineNS6.png" /></td><td>North South Line (NS)</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_PunggolLRT8.png" /></td><td>Punggol LRT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_SengkangLRT9.png" /></td><td>Sengkang LRT</td></tr></table><hr></hr>': layer_MRTLRTLine2,'Population_Density_Age_Over_65<br /><table><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_07450.png" /></td><td> 0 - 745 </td></tr><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_74520781.png" /></td><td> 745 - 2078 </td></tr><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_207836232.png" /></td><td> 2078 - 3623 </td></tr><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_362357323.png" /></td><td> 3623 - 5732 </td></tr><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_573283094.png" /></td><td> 5732 - 8309 </td></tr></table><hr></hr>': layer_PopulationDensityAgeOver651,'Total_Population_Age_Over_65<br /><table><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_08800.png" /></td><td> 0 - 880 </td></tr><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_88022701.png" /></td><td> 880 - 2270 </td></tr><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_227040702.png" /></td><td> 2270 - 4070 </td></tr><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_407087703.png" /></td><td> 4070 - 8770 </td></tr><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_8770153504.png" /></td><td> 8770 - 15350 </td></tr></table>': layer_TotalPopulationAgeOver650,},{collapsed:false}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
