@@ -69,7 +69,7 @@
         });
         var map = L.map('map', {
             measureControl:true,
-            zoomControl:true, maxZoom:13, minZoom:11
+            zoomControl:true, maxZoom:12, minZoom:11
         }).fitBounds([[1.24266501072,103.713269625],[1.40667714987,103.958304229]]);
         var hash = new L.Hash(map);
         map.attributionControl.addAttribution('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a>');
@@ -78,12 +78,12 @@
         var raster_group = new L.LayerGroup([]);
         var basemap0 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors,<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-            maxZoom: 22
+            maxZoom: 12
         });
         basemap0.addTo(map);
         var basemap1 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-            maxZoom: 22
+            maxZoom: 12
         });
         basemap1.addTo(map);
         function setBounds() {
@@ -210,7 +210,7 @@
         style: style_TotalPopulationAgeOver650
     });
         bounds_group.addLayer(layer_TotalPopulationAgeOver650);
-        feature_group.addLayer(layer_TotalPopulationAgeOver650);
+        //feature_group.addLayer(layer_TotalPopulationAgeOver650);
         function pop_PopulationDensityAgeOver651(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -764,7 +764,7 @@
                 lineJoin: 'miter',
                 weight: 1,
                 fillOpacity: 1,
-                fillColor: 'rgba(99,128,62,1.0)',
+                fillColor: 'rgba(253, 174, 107, 1)',
             }
         }
         map.createPane('pane_Eldercare4');
@@ -778,7 +778,7 @@
             }
         });
         bounds_group.addLayer(layer_Eldercare4);
-        feature_group.addLayer(layer_Eldercare4);
+        //feature_group.addLayer(layer_Eldercare4);
         function pop_AreaWithoutEldercare5(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -895,7 +895,7 @@
         style: style_AreaWithoutEldercare5
     });
         bounds_group.addLayer(layer_AreaWithoutEldercare5);
-        feature_group.addLayer(layer_AreaWithoutEldercare5);
+        //feature_group.addLayer(layer_AreaWithoutEldercare5);
         function pop_HospitalsGeneralBuffer6(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -1225,7 +1225,7 @@
         style: style_PopulationBedRatioVoronoishp8
     });
         bounds_group.addLayer(layer_PopulationBedRatioVoronoishp8);
-        feature_group.addLayer(layer_PopulationBedRatioVoronoishp8);
+        //feature_group.addLayer(layer_PopulationBedRatioVoronoishp8);
         function pop_HospitalsGeneral9(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -1300,12 +1300,13 @@
             }
         });
         bounds_group.addLayer(layer_HospitalsGeneral9);
-        feature_group.addLayer(layer_HospitalsGeneral9);
+        //feature_group.addLayer(layer_HospitalsGeneral9);
         raster_group.addTo(map);
         feature_group.addTo(map);
         var baseMaps = {'OSM': basemap0, 'OSM B&W': basemap1};
         L.control.layers(baseMaps,{'Hospitals_General (Num of Beds)<br /><table><tr><td style="text-align: center;"><img src="legend/HospitalsGeneral9_1063800.png" /></td><td> 106 - 380 </td></tr><tr><td style="text-align: center;"><img src="legend/HospitalsGeneral9_38011001.png" /></td><td> 380 - 1100 </td></tr><tr><td style="text-align: center;"><img src="legend/HospitalsGeneral9_110017002.png" /></td><td> 1100 - 1700 </td></tr></table><hr></hr>': layer_HospitalsGeneral9,'Population_Bed_Ratio_Voronoishp<br /><table><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_ChangiGeneralHospital0.png" /></td><td>Changi General Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_GleneaglesHospital1.png" /></td><td>Gleneagles Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_KhooTeckPuatHospital2.png" /></td><td>Khoo Teck Puat Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_MountAlverniaHospital3.png" /></td><td>Mount Alvernia Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_NationalUniversityHospital4.png" /></td><td>National University Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_NgTengFongGeneralHospitalJurongCommunityHospital5.png" /></td><td>Ng Teng Fong General Hospital & Jurong Community Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_ParkwayEastHospitalformerEastShoreHospital6.png" /></td><td>Parkway East Hospital (former East Shore Hospital)</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_RafflesHospital7.png" /></td><td>Raffles Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_SengkangGeneralHospital8.png" /></td><td>Sengkang General Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_SingaporeGeneralHospital9.png" /></td><td>Singapore General Hospital</td></tr><tr><td style="text-align: center;"><img src="legend/PopulationBedRatioVoronoishp8_TanTockSengHospital10.png" /></td><td>Tan Tock Seng Hospital</td></tr></table><hr></hr>': layer_PopulationBedRatioVoronoishp8,'<img src="legend/HospitalMRTPointsCount7.png" /> Hospital_MRT_Points_Count (Count == 0) <hr></hr>': layer_HospitalMRTPointsCount7,'<img src="legend/HospitalsGeneralBuffer6.png" /> Hospitals_General_Buffer <hr></hr>': layer_HospitalsGeneralBuffer6,'Area_Without_Eldercare (Population Age >65) <br /><table><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_108100.png" /></td><td> 10 - 810 </td></tr><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_81019501.png" /></td><td> 810 - 1950 </td></tr><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_195035102.png" /></td><td> 1950 - 3510 </td></tr><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_351053203.png" /></td><td> 3510 - 5320 </td></tr><tr><td style="text-align: center;"><img src="legend/AreaWithoutEldercare5_532069604.png" /></td><td> 5320 - 6960 </td></tr></table><hr></hr>': layer_AreaWithoutEldercare5,'<img src="legend/Eldercare4.png" /> Eldercare<hr></hr>': layer_Eldercare4,'MRTLRTStnPtt<br /><table><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_BP0.png" /></td><td>BP</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_CC1.png" /></td><td>CC</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_CG2.png" /></td><td>CG</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_DT3.png" /></td><td>DT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_EW4.png" /></td><td>EW</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_NE5.png" /></td><td>NE</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_NS6.png" /></td><td>NS</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_PE8.png" /></td><td>PE</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_PW9.png" /></td><td>PW</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_SE10.png" /></td><td>SE</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTStnPtt3_SW11.png" /></td><td>SW</td></tr></table><hr></hr>': layer_MRTLRTStnPtt3,'MRT_LRT_Line<br /><table><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_BukitPanjangLRT0.png" /></td><td>Bukit Panjang LRT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_CircleLineMRT1.png" /></td><td>Circle Line MRT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_DowntownLineMRT2.png" /></td><td>Downtown Line MRT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_MRTEastWestLineEW3.png" /></td><td>MRT East West Line (EW)</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_MRTEastWestLineEWChangiAirportLine4.png" /></td><td>MRT East West Line (EW) Changi Airport Line</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_NorthEastLineNE5.png" /></td><td>North East Line (NE)</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_NorthSouthLineNS6.png" /></td><td>North South Line (NS)</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_PunggolLRT8.png" /></td><td>Punggol LRT</td></tr><tr><td style="text-align: center;"><img src="legend/MRTLRTLine2_SengkangLRT9.png" /></td><td>Sengkang LRT</td></tr></table><hr></hr>': layer_MRTLRTLine2,'Population_Density_Age_Over_65<br /><table><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_07450.png" /></td><td> 0 - 745 </td></tr><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_74520781.png" /></td><td> 745 - 2078 </td></tr><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_207836232.png" /></td><td> 2078 - 3623 </td></tr><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_362357323.png" /></td><td> 3623 - 5732 </td></tr><tr><td style="text-align: center;"><img src="legend/PopulationDensityAgeOver651_573283094.png" /></td><td> 5732 - 8309 </td></tr></table><hr></hr>': layer_PopulationDensityAgeOver651,'Total_Population_Age_Over_65<br /><table><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_08800.png" /></td><td> 0 - 880 </td></tr><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_88022701.png" /></td><td> 880 - 2270 </td></tr><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_227040702.png" /></td><td> 2270 - 4070 </td></tr><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_407087703.png" /></td><td> 4070 - 8770 </td></tr><tr><td style="text-align: center;"><img src="legend/TotalPopulationAgeOver650_8770153504.png" /></td><td> 8770 - 15350 </td></tr></table>': layer_TotalPopulationAgeOver650,},{collapsed:false}).addTo(map);
         setBounds();
+		/*
 		map.removeLayer(layer_HospitalsGeneral9);
         map.removeLayer(layer_PopulationBedRatioVoronoishp8);
         //map.removeLayer(layer_HospitalMRTPointsCount7);
@@ -1314,7 +1315,9 @@
         map.removeLayer(layer_Eldercare4);
         //map.removeLayer(layer_MRTLRTStnPtt3);
         map.removeLayer(layer_TotalPopulationAgeOver650);
+		*/
 		map.fitBounds(feature_group.getBounds());
+		
         </script>
     </body>
 </html>
